@@ -19,7 +19,7 @@ class _MySplashState extends State<MySplash> {
   User? user;
 
   Future<void> checkUser() async {
-    await Future.delayed(const Duration(seconds: 0));
+    await Future.delayed(const Duration(seconds: 5));
 
     setState(() {
       user = FirebaseAuth.instance.currentUser;
