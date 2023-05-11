@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "495275501948",
+    "firebase_url": "https://resolute-project-01-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "resolute-project-01",
+    "storage_bucket": "resolute-project-01.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:495275501948:android:7472d080403b78dff65cf9",
+        "android_client_info": {
+          "package_name": "com.example.resolute_project_01"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "495275501948-qpmoh6jpbpck68umpdi52ej633din4hk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.resolute_project_01",
+            "certificate_hash": "75c3dbffd8746df3445355bc7c1d5ec1f63c8dd9"
+          }
+        },
+        {
+          "client_id": "495275501948-qtrhdhiggq4fsqrood4o3urinch78dl3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD887OHFVL5IFZyagEB72PULTGwbdpqZxQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "495275501948-qtrhdhiggq4fsqrood4o3urinch78dl3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
