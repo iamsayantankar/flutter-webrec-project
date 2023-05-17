@@ -9,7 +9,7 @@ class MyVideoFrame {
   static OverlayEntry? entry;
   static Offset offset = const Offset(20, 40);
 
-  static myOverLy(RTCVideoRenderer localRenderer, BuildContext context,void Function() myStateSet) {
+  static myOverLy(RTCVideoRenderer localRenderer, BuildContext context, Function myStateSet) {
     entry = OverlayEntry(
       builder: (context) => Positioned(
         top: offset.dy,
@@ -17,7 +17,7 @@ class MyVideoFrame {
         child: GestureDetector(
           onPanUpdate: (details) {
               offset = details.delta;
-              myStateSet;
+              myStateSet();
               },
           child: SizedBox(
             height: 100,
@@ -34,7 +34,7 @@ class MyVideoFrame {
 
 
   static myVideoFrame(RTCVideoRenderer localRenderer, RTCVideoRenderer remoteRenderer,
-      BuildContext context, Signaling signaling, void Function() myStateSet, DatabaseReference databaseReference) {
+      BuildContext context, Signaling signaling, Function myStateSet, DatabaseReference databaseReference) {
     double widthThis = MediaQuery.of(context).size.width;
     double heightThis = MediaQuery.of(context).size.height;
 
@@ -66,8 +66,11 @@ class MyVideoFrame {
                     signaling.micEnabled
                         ? signaling.micEnabled = false
                         : signaling.micEnabled = true;
+                    print("textt Sayantan");
+                    myStateSet();
+                    print("textt Sayantan");
+
                     signaling.muteMic();
-                    myStateSet;
                   },
                   child: Column(
                     children: [
@@ -136,7 +139,7 @@ class MyVideoFrame {
                         ? signaling.videoEnabled = false
                         : signaling.videoEnabled = true;
                     signaling.muteVideo();
-                    myStateSet;
+                    myStateSet();
                   },
                   child: Column(
                     children: [
@@ -166,4 +169,6 @@ class MyVideoFrame {
       ],
     );
   }
+
+
 }

@@ -271,7 +271,7 @@ class _HomeState extends State<Home> {
                                     "numberTo": numberTo,
                                     "numberFrom": numberFrom,
                                   };
-                                  MyFCM.sendNotification(receiverTo, data);
+                                  // MyFCM.sendNotification(receiverTo, data);
 
                                   VC.data = data;
                                   VC.ringing = false;

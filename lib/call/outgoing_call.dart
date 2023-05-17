@@ -5,6 +5,7 @@ import 'package:keep_screen_on/keep_screen_on.dart';
 import 'package:resolute_project_01/call/constants.dart';
 import 'package:resolute_project_01/call/video_frame.dart';
 import 'package:resolute_project_01/utils/call_signaling.dart';
+import 'package:resolute_project_01/utils/my_fcm.dart';
 import 'package:resolute_project_01/utils/services/call_details.dart';
 import 'package:swipeable_button_view/swipeable_button_view.dart';
 import 'package:uuid/uuid.dart';
@@ -51,19 +52,6 @@ class _OutgoingCallState extends State<OutgoingCall>
 
 
 
-    _localRenderer.initialize();
-    _remoteRenderer.initialize();
-    // signaling.openUserMedia(_localRenderer, _remoteRenderer);
-
-    signaling.onAddRemoteStream = ((stream) {
-      _remoteRenderer.srcObject = stream;
-      setState(() {});
-    });
-
-
-    signaling.openUserMedia(_localRenderer, _remoteRenderer);
-
-
     createRoom();
     callEndController();
     callReceiveController();
@@ -82,15 +70,6 @@ class _OutgoingCallState extends State<OutgoingCall>
     )..repeat();
     controller.repeat();
   }
-
-
-  @override
-  void dispose() {
-    _localRenderer.dispose();
-    _remoteRenderer.dispose();
-    super.dispose();
-  }
-
 
   bool isFinished = false;
 
@@ -221,14 +200,27 @@ class _OutgoingCallState extends State<OutgoingCall>
       body: SafeArea(
         child: MyVideoFrame.myVideoFrame(_localRenderer, _remoteRenderer, context,signaling,myStateSet,databaseReference),
       ),
-    );  }
+    );
+  }
 
   Future<void> createRoom() async {
     databaseReference = FirebaseDatabase.instance.reference();
 
+    await _localRenderer.initialize();
+    await _remoteRenderer.initialize();
+
+    signaling.onAddRemoteStream = ((stream) {
+      _remoteRenderer.srcObject = stream;
+      setState(() {});
+    });
+    await signaling.openUserMedia(_localRenderer, _remoteRenderer);
+
+
     await signaling.createRoom(_remoteRenderer);
 
     setState(() {});
+
+    MyFCM.sendNotification(VC.data["fcmTo"], VC.data);
   }
 
   late DatabaseReference databaseReference;
@@ -300,6 +292,11 @@ class _OutgoingCallState extends State<OutgoingCall>
           VC.callUid = "";
           signaling.hangUp(_localRenderer);
           KeepScreenOn.turnOn(false);
+
+          _localRenderer.dispose();
+          _remoteRenderer.dispose();
+          controller.dispose();
+
           Navigator.pop(context);
 
       }

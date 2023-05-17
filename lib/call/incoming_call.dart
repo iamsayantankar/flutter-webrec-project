@@ -5,6 +5,7 @@ import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:keep_screen_on/keep_screen_on.dart';
 import 'package:resolute_project_01/call/constants.dart';
 import 'package:resolute_project_01/call/video_frame.dart';
+// import 'package:resolute_project_01/call/video_frame.dart';
 import 'package:resolute_project_01/utils/call_signaling.dart';
 import 'package:resolute_project_01/utils/services/call_details.dart';
 import 'package:swipeable_button_view/swipeable_button_view.dart';
@@ -25,13 +26,8 @@ class _IncomingCallState extends State<IncomingCall>
   String callUid = const Uuid().v4().toString();
 
   Signaling signaling = Signaling();
-   final RTCVideoRenderer _localRenderer = RTCVideoRenderer();
-   final RTCVideoRenderer _remoteRenderer = RTCVideoRenderer();
-
-  // initRenderer() async {
-  //   await _localRenderer.initialize();
-  //   await _remoteRenderer.initialize();
-  // }
+  final RTCVideoRenderer _localRenderer = RTCVideoRenderer();
+  final RTCVideoRenderer _remoteRenderer = RTCVideoRenderer();
 
 
   late AnimationController controller;
@@ -55,51 +51,38 @@ class _IncomingCallState extends State<IncomingCall>
   late double radius = 215;
 
 
-  initRenderers() async {
-    await _localRenderer.initialize();
-    await _remoteRenderer.initialize();
-
-    signaling.onAddRemoteStream = ((stream) {
-      _remoteRenderer.srcObject = stream;
-    });
-
-  }
   @override
   void initState() {
     databaseReference = FirebaseDatabase.instance.reference();
 
     VC.callUid = callUid;
+
+
     playSound();
     countDown();
     callEndController();
     callReceiveController();
 
 
-    openMedia();
+    // openMedia();
 
     controller = AnimationController(
       vsync: this,
       lowerBound: 0.5,
       duration: Duration(milliseconds: speed),
-    )..repeat();
+    )
+      ..repeat();
     controller.repeat();
 
     // TODO: implement initState
     super.initState();
   }
 
-  @override
-  void dispose() {
-    _localRenderer.dispose();
-    _remoteRenderer.dispose();
-    super.dispose();
-  }
 
   bool isFinished = false;
 
   @override
   Widget build(BuildContext context) {
-
     if (!startCall) {
       return Scaffold(
         backgroundColor: callBackgroundColor,
@@ -110,7 +93,8 @@ class _IncomingCallState extends State<IncomingCall>
               children: [
                 Text(
                   VC.data["nameFrom"],
-                  style: Theme.of(context)
+                  style: Theme
+                      .of(context)
                       .textTheme
                       .headline4!
                       .copyWith(color: Colors.white),
@@ -147,7 +131,7 @@ class _IncomingCallState extends State<IncomingCall>
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color:
-                                  waveColor.withOpacity(1 - controller.value),
+                              waveColor.withOpacity(1 - controller.value),
                             ),
                           ),
                           Container(
@@ -157,11 +141,11 @@ class _IncomingCallState extends State<IncomingCall>
                               border: Border.all(
                                   color: boarderColor, width: boarderWidth),
                               borderRadius:
-                                  BorderRadius.all(Radius.circular(imageSize)),
+                              BorderRadius.all(Radius.circular(imageSize)),
                             ),
                             child: ClipRRect(
                               borderRadius:
-                                  BorderRadius.all(Radius.circular(imageSize)),
+                              BorderRadius.all(Radius.circular(imageSize)),
                               child: Image.network(
                                 VC.data["imgFrom"],
                                 fit: BoxFit.cover,
@@ -188,9 +172,11 @@ class _IncomingCallState extends State<IncomingCall>
                   activeColor: const Color(0xFF009C41),
                   isFinished: isFinished,
                   onWaitingProcess: () {
-
                     String thisTime =
-                        DateTime.now().millisecondsSinceEpoch.toString();
+                    DateTime
+                        .now()
+                        .millisecondsSinceEpoch
+                        .toString();
                     databaseReference
                         .child("videoCall/${VC.data["roomKey"]}")
                         .update({
@@ -229,7 +215,10 @@ class _IncomingCallState extends State<IncomingCall>
                     VC.pickup = false;
                     player.pause();
                     String thisTime =
-                        DateTime.now().millisecondsSinceEpoch.toString();
+                    DateTime
+                        .now()
+                        .millisecondsSinceEpoch
+                        .toString();
                     databaseReference
                         .child("videoCall/${VC.data["roomKey"]}")
                         .update({
@@ -254,6 +243,26 @@ class _IncomingCallState extends State<IncomingCall>
       );
     }
 
+
+    double widthThis = MediaQuery
+        .of(context)
+        .size
+        .width;
+    double heightThis = MediaQuery
+        .of(context)
+        .size
+        .height;
+
+    double heightTopThis = MediaQuery
+        .of(context)
+        .padding
+        .top;
+    double heightBottomThis = MediaQuery
+        .of(context)
+        .padding
+        .bottom;
+
+
     return Scaffold(
       backgroundColor: callBackgroundColor,
       body: SafeArea(
@@ -264,6 +273,17 @@ class _IncomingCallState extends State<IncomingCall>
 
   Future<void> playSound() async {
     databaseReference = FirebaseDatabase.instance.reference();
+
+    await _localRenderer.initialize();
+    await _remoteRenderer.initialize();
+
+    signaling.onAddRemoteStream = ((stream) {
+      _remoteRenderer.srcObject = stream;
+      setState(() {});
+    });
+    await signaling.openUserMedia(_localRenderer, _remoteRenderer);
+
+
     databaseReference.child("videoCall/${VC.data["roomKey"]}").update({
       "status": "ringing",
     }).asStream();
@@ -280,7 +300,10 @@ class _IncomingCallState extends State<IncomingCall>
       VC.ringing = false;
       VC.pickup = false;
       player.pause();
-      String thisTime = DateTime.now().millisecondsSinceEpoch.toString();
+      String thisTime = DateTime
+          .now()
+          .millisecondsSinceEpoch
+          .toString();
       databaseReference
           .child("videoCall/${VC.data["roomKey"]}")
           .update({"end": "miss call", "ending": thisTime}).asStream();
@@ -307,7 +330,7 @@ class _IncomingCallState extends State<IncomingCall>
         KeepScreenOn.turnOn();
 
 
-        MyVideoFrame.myOverLy(_localRenderer,context,myStateSet);
+        MyVideoFrame.myOverLy(_localRenderer, context, myStateSet);
       }
       setState(() {});
     });
@@ -320,7 +343,6 @@ class _IncomingCallState extends State<IncomingCall>
         .child("videoCall/${VC.data["roomKey"]}/end")
         .onValue
         .listen((DatabaseEvent event) {
-
       if (event.snapshot.value.toString() != "0") {
         VC.ringing = false;
         VC.pickup = false;
@@ -328,30 +350,23 @@ class _IncomingCallState extends State<IncomingCall>
         VC.callUid = "";
         player.pause();
         KeepScreenOn.turnOn(false);
+        signaling.hangUp(_localRenderer);
+
+        _localRenderer.dispose();
+        _remoteRenderer.dispose();
+        controller.dispose();
+
+
         Navigator.pop(context);
       }
     });
   }
 
-
-
-  Future<void> openMedia() async {
-    await _localRenderer.initialize();
-    await _remoteRenderer.initialize();
-
-    signaling.onAddRemoteStream = ((stream) {
-      _remoteRenderer.srcObject = stream;
-    });
-
-
-    signaling.openUserMedia(_localRenderer, _remoteRenderer);
-  }
-
-
-
-  void myStateSet(){
+  void myStateSet() {
     setState(() {
 
     });
   }
+
+
 }
